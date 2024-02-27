@@ -28,8 +28,12 @@ def _update_image_info(state):
         file_uri = urllib.parse.quote(current_image_path)
         state["current_image_url"] = _get_dataurl_for_image(current_image_path)
         state["current_image_name"] = current_image_path.split("/")[-1]
-        with open(_get_caption_file_path_from_image_path(current_image_path), "r") as file:
-            state["current_caption"] = file.read()
+        try:
+            with open(_get_caption_file_path_from_image_path(current_image_path), "r") as file:
+                state["current_caption"] = file.read()
+        except FileNotFoundError:
+            # Handle case where caption file doesn't exist yet
+            pass
     except IndexError:
         # Handle case where index outside of available images
         state["current_image_url"] = ""
@@ -113,7 +117,4 @@ initial_state = ss.init_state({
     "current_image_url": "",
     "current_image_name": "",
     "current_caption": "",
-    "_my_private_element": 1337,
-    "message": None,
-    "counter": 26,
 })
